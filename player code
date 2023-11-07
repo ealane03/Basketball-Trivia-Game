@@ -1,0 +1,10 @@
+    def parse_players_by_alph(self,response):
+        """
+        Begin at player page by alphabet, collects links to players pages
+        Will call next function to scrape player page
+        """
+        prefix = "https://www.basketball-reference.com"
+        player_suffix = response.css("th.left a::attr(href)").getall()
+        for suffix in player_suffix:
+            player_url = prefix + suffix
+            yield {"player_url" : player_url}
