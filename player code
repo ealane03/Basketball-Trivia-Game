@@ -1,4 +1,37 @@
-    def parse_players_by_alph(self,response):
+# to run 
+# scrapy crawl hoops_spider -o url.csv
+
+import scrapy
+from scrapy.http.request import Request
+USER_AGENT='hoops-cool-project (https://www.basketball-reference.com/players/a/abdelal01.html)'
+class HoopsSpider(scrapy.Spider):
+    name = 'hoops_spider'
+    
+    start_urls = ["https://www.basketball-reference.com"]
+    def parse(self, response):
+        '''
+        Hardcode from initial homepage to players page.
+        Call parse_players function on players page.
+        
+        No output. 
+        '''
+        players_url = response.url + "/players/" # use to navigate to players page
+        yield scrapy.Request(players_url, callback = self.parse_players) # callback next function
+        
+    def parse_players(self,response):
+        '''
+        Begin at players page, collect links to pages showing lists of all nba players by letter of last name
+        For each group of players, call next function.
+        
+        No output.
+        '''
+        # create list of players links
+        players_list = ['https://www.basketball-reference.com/' + a.attrib['href'] 
+                      for a in response.css('ul.alphabet a')] 
+        for players in players_list:
+            #print(players)
+            yield scrapy.Request(players, callback = self.parse_player_by_alph) # callback next function for each player list    
+    def parse_player_by_alph(self,response):
         """
         Begin at player page by alphabet, collects links to players pages
         Will call next function to scrape player page
@@ -7,4 +40,26 @@
         player_suffix = response.css("th.left a::attr(href)").getall()
         for suffix in player_suffix:
             player_url = prefix + suffix
-            yield {"player_url" : player_url}
+            yield scrapy.Request(player_url, callback = self.parse_player_stats)      
+            
+    def parse_player_stats(self,response):
+        """
+        Pulls players stats and outputs them
+        """
+        player_name = response.css("div h1 span::text").get()
+        stats_1 = response.css("div.p1 div p::text").extract()
+        stats_2 = response.css("div.p2 div p::text").extract()
+        teams = response.css("div.uni_holder.bbr a::attr(data-tip)").extract()
+        yield {"Name":player_name,
+               "Games":stats_1[0],
+              "Points":stats_1[1],
+              "Rebounds":stats_1[2],
+              "Assists":stats_1[3],
+              "Field Goal %": stats_2[0],
+              "3 Point Field Goal %":stats_2[1],
+              "Free Throw %": stats_2[2],
+              "Effective Field Goal %": stats_2[3],
+              "Teams": teams[0]}
+            
+
+    
