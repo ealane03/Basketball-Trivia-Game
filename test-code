@@ -1,1 +1,40 @@
-hi
+# to run 
+# scrapy crawl basketballref_spider -o stats.csv
+
+import scrapy
+
+class basketballrefSpider(scrapy.Spider):
+    name = 'basketballref_spider'
+    
+    start_urls = ['https://www.basketball-reference.com']
+    
+    def parse(self, response):
+        '''
+        Hardcode from initial homepage to players page.
+        Call parse_players function on players page.
+        
+        No output. 
+        '''
+        players_url = response.url + "/players/" # use to navigate to players page
+        yield scrapy.Request(players_url, callback = self.parse_players) # callback next function
+        
+    def parse_players(self,response):
+        '''
+        Begin at players page, collect links to pages showing lists of all nba players by letter of last name
+        For each group of players, call next function.
+        
+        No output.
+        '''
+        # create list of players links
+        players_list = ['https://www.basketball-reference.com/' + a.attrib['href'] 
+                      for a in response.css('ul.alphabet a')] 
+        for players in players_list:
+            yield scrapy.Request(players, callback = self.) # callback next function for each player list  
+            
+            
+            
+            
+            div.p1 p:nth-of-type(2)
+            div.p2 p:nth-of-type(2)
+            
+            div h1 span::text # name
