@@ -15,7 +15,7 @@ class basketballrefSpider(scrapy.Spider):
         
         No output. 
         '''
-        players_url = response.url + "/players/" # use to navigate to players page
+        players_url = response.url + "/players" # use to navigate to players page
         yield scrapy.Request(players_url, callback = self.parse_players) # callback next function
         
     def parse_players(self,response):
@@ -26,15 +26,13 @@ class basketballrefSpider(scrapy.Spider):
         No output.
         '''
         # create list of players links
-        players_list = ['https://www.basketball-reference.com/' + a.attrib['href'] 
-                      for a in response.css('ul.alphabet a')] 
+        players_list = ['https://www.basketball-reference.com' + a.attrib['href'] for a in response.css('ul.alphabet li a')] 
         for players in players_list:
-            yield scrapy.Request(players, callback = self.) # callback next function for each player list  
+            yield scrapy.Request(players, callback = self.parse_players_stats) # callback next function for each player list  
             
+    def parse_players_stats(self,response):
+        player_name = response.css("div h1 span::text").get()
+        stats = response.css("h2.title a::text").getall()
+        for stat in stats:
+            yield {'player': player_name, 'stat': stat}     
             
-            
-            
-            div.p1 p:nth-of-type(2)
-            div.p2 p:nth-of-type(2)
-            
-            div h1 span::text # name
