@@ -3,6 +3,7 @@
 
 import scrapy
 from scrapy.http.request import Request
+import string
 USER_AGENT='hoops-cool-project (https://www.basketball-reference.com/players/a/abdelal01.html)'
 class HoopsSpider(scrapy.Spider):
     name = 'hoops_spider'
@@ -28,9 +29,11 @@ class HoopsSpider(scrapy.Spider):
         # create list of players links
         players_list = ['https://www.basketball-reference.com/' + a.attrib['href'] 
                       for a in response.css('ul.alphabet a')] 
-        for players in players_list:
-            #print(players)
-            yield scrapy.Request(players, callback = self.parse_player_by_alph) # callback next function for each player list    
+        prefix = "https://www.basketball-reference.com/players/"
+        suffix = list(string.ascii_lowercase) 
+        for a in suffix:
+            alph_url = prefix + a
+            yield scrapy.Request(alph_url, callback = self.parse_player_by_alph) # callback next function for each player list    
     def parse_player_by_alph(self,response):
         """
         Begin at player page by alphabet, collects links to players pages
@@ -47,8 +50,8 @@ class HoopsSpider(scrapy.Spider):
         Pulls players stats and outputs them
         """
         player_name = response.css("div h1 span::text").get()
-        stats_1 = response.css("div.p1 div p::text").extract()
-        stats_2 = response.css("div.p2 div p::text").extract()
+        stats_1 = response.css("div.p1 div p:nth-of-type(2)::text").extract()
+        stats_2 = response.css("div.p1 div p:nth-of-type(2)::text").extract()
         teams = response.css("div.uni_holder.bbr a::attr(data-tip)").extract()
         yield {"Name":player_name,
                "Games":stats_1[0],
@@ -60,6 +63,3 @@ class HoopsSpider(scrapy.Spider):
               "Free Throw %": stats_2[2],
               "Effective Field Goal %": stats_2[3],
               "Teams": teams[0]}
-            
-
-    
