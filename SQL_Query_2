@@ -30,6 +30,7 @@ for result in cursor.fetchall():
     print(result[0])
     
 
+
 def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp):
     '''
     SQL query function pulling stats.
@@ -45,11 +46,16 @@ def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, bl
     FROM stats S 
     WHERE S.PTS >= {points} AND S.AST >= {assists} AND S.BLK >= {blocks} AND S.STL >= {steals} AND S.TRB >= {rebounds} AND 
           S.PTS <= {points_} AND S.AST <= {assists_} AND S.BLK <= {blocks_} AND S.STL <= {steals_} AND S.TRB <= {rebounds_} AND
-          S.THRP >= {thr_pt} AND S.THRP_P >= {thr_pt_pct} AND S.FT_P >= {ft_pct} AND S.TM = "{team}" AND S.POS = "{pos}" AND S.MVP == {mvp}
+          S.THRP >= {thr_pt} AND S.THRP_P >= {thr_pt_pct} AND S.FT_P >= {ft_pct}  AND S.MVP == {mvp}
     """
     
     data = sqlite3.connect("data.db")
     table = pd.read_sql_query(cmd, data)
+    
+    if team != None:
+        table= table[table['Tm']==f"{team}"]
+    if pos != None:
+        table= table[table['Pos']==f"{pos}"]
     data.close()
     
     return table # return pandas dataframe
@@ -69,12 +75,12 @@ thr_pt = 0
 thr_pt_pct = 0 
 ft_pct = 0 
 team = None
-pos = "PG"
+pos = None
 mvp = False
 
 points = 25
-team = "GSW"
-
+team= "GSW"
 
 
 query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
+
