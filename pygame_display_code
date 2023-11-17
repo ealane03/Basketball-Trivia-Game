@@ -1,0 +1,128 @@
+import pygame as pg
+import time
+
+
+pg.init()
+screen = pg.display.set_mode((1400, 800))
+COLOR_INACTIVE = pg.Color('lightskyblue3')
+COLOR_ACTIVE = pg.Color('dodgerblue2')
+FONT = pg.font.Font(None, 32)
+FONT_SMALL = pg.font.Font(None, 28)
+
+
+class InputBox:
+
+    def __init__(self, x, y, w, h, text=''):
+        self.rect = pg.Rect(x, y, w, h)
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.txt_surface = FONT_SMALL.render(text, True, self.color)
+        self.active = False
+
+    def handle_event(self, event):
+        if event.type == pg.MOUSEBUTTONDOWN:
+            # If the user clicked on the input_box rect.
+            if self.rect.collidepoint(event.pos):
+                # Toggle the active variable.
+                self.active = not self.active
+            else:
+                self.active = False
+            # Change the current color of the input box.
+            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        if event.type == pg.KEYDOWN:
+            if self.active:
+                if event.key == pg.K_RETURN: # user presses enter
+                    print(self.text)
+                    # check answer using query
+                    # display correct or incorrect after
+                    self.text = ''
+                elif event.key == pg.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+                # Re-render the text.
+                self.txt_surface = FONT_SMALL.render(self.text, True, self.color)
+
+    def update(self):
+        # Resize the box if the text is too long.
+        width = max(200, self.txt_surface.get_width()+10)
+        self.rect.w = width
+
+    def draw(self, screen):
+        # Blit the text.
+        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        # Blit the rect.
+        pg.draw.rect(screen, self.color, self.rect, 2)
+
+
+class question:
+    def __init__(self, x, y, text):
+        self.color = COLOR_INACTIVE
+        self.text = text
+        self.x = x
+        self.y = y
+        
+    def label(self, screen):
+        # render text
+        q = FONT.render(self.text, False, (255,255,255))
+        screen.blit(q, (self.x, self.y))
+        
+        
+
+def main():
+    clock = pg.time.Clock()
+    input_box1 = InputBox(350, 150, 185, 185)
+    input_box2 = InputBox(350, 350, 185, 185)
+    input_box3 = InputBox(350, 550, 185, 185)
+    
+    input_box4 = InputBox(600, 150, 185, 185)
+    input_box5 = InputBox(600, 350, 185, 185)
+    input_box6 = InputBox(600, 550, 185, 185)
+    
+    input_box7 = InputBox(850, 150, 185, 185)
+    input_box8 = InputBox(850, 350, 185, 185)
+    input_box9 = InputBox(850, 550, 185, 185)
+
+    input_boxes = [input_box1, input_box2, input_box3,
+                   input_box4, input_box5, input_box6,
+                   input_box7, input_box8, input_box9]
+    
+    q1 = question(350, 100, "OKC")
+    q2 = question(600, 100, "GSW")
+    q3 = question(850, 100, "SAN")
+    q4 = question(200, 150, "HOU")
+    q5 = question(200, 350, "NOP")
+    q6 = question(200, 550, "LAL")
+    
+    questions = [q1, q2, q3, q4, q5, q6]
+    
+    done = False
+
+    # run queries in main
+    
+    
+    while not done:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                done = True
+            for box in input_boxes:
+                box.handle_event(event)
+
+        for box in input_boxes:
+            box.update()
+
+        screen.fill((30, 30, 30))
+        for box in input_boxes:
+            box.draw(screen)
+            
+        for q in questions:
+            q.label(screen)
+        
+        
+        pg.display.flip()
+        clock.tick(30)
+
+
+if __name__ == '__main__':
+    main()
+    pg.quit()
