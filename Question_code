@@ -1,0 +1,45 @@
+class Game:
+    a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
+    def default():
+        points=0
+        assists = 0
+        blocks = 0
+        steals = 0
+        rebounds = 0
+        points_ = 100 
+        assists_ = 100
+        blocks_ = 100 
+        steals_ = 100 
+        rebounds_ = 100 
+        thr_pt = 0
+        thr_pt_pct = 0 
+        ft_pct = 0 
+        team = None
+        pos = None
+        mvp = False
+        globals().update(locals())
+        #return (points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
+    def questionr1():
+        team="CLE"
+        globals().update(locals())
+    def questionc1():
+        points=10
+        globals().update(locals())
+    def questionr2():
+        pos="PG"
+        globals().update(locals())
+    def questionc2():
+        assists=5
+        globals().update(locals()) 
+    def q1():
+        Game.default()
+        Game.questionr1()
+        Game.questionc1()
+        a
+        return(a)
+    def q2():
+        Game.default()
+        Game.questionr2()
+        Game.questionc2()
+        a
+        return(a)
