@@ -31,7 +31,7 @@ for result in cursor.fetchall():
     
 
 
-def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp):
+def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1,team2, pos, mvp):
     '''
     SQL query function pulling stats.
     
@@ -52,8 +52,15 @@ def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, bl
     data = sqlite3.connect("data.db")
     table = pd.read_sql_query(cmd, data)
     
-    if team != None:
-        table= table[table['Tm']==f"{team}"]
+    if team1 and team2 != None:
+        table1 = table[table['Tm']==f"{team1}"]
+        table2 = table[table['Tm']==f"{team2}"]
+        frames = [table1,table2]
+        table = pd.concat(frames)
+    elif team1 != None:
+        table= table[table['Tm']==f"{team1}"]
+    elif team2 != None:
+        table= table[table['Tm']==f"{team2}"]
     if pos != None:
         table= table[table['Pos']==f"{pos}"]
     data.close()
@@ -74,13 +81,10 @@ rebounds_ = 100
 thr_pt = 0
 thr_pt_pct = 0 
 ft_pct = 0 
-team = None
+team1 = None
+team2 = None
 pos = None
 mvp = False
 
-points = 25
-team= "GSW"
-
-
-query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
-
+base = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1,team2, pos, mvp)
+base
