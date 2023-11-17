@@ -1,5 +1,5 @@
+import numpy as np
 class Game:
-    a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
     def default():
         points=0
         assists = 0
@@ -31,15 +31,27 @@ class Game:
     def questionc2():
         assists=5
         globals().update(locals()) 
-    def q1():
+    global a
+    a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
+class Question:    
+    def q1(player_name):
         Game.default()
         Game.questionr1()
         Game.questionc1()
         a
-        return(a)
-    def q2():
+        #print(a)
+        return(Question.player_match(player_name))
+    def q2(player_name):
         Game.default()
         Game.questionr2()
         Game.questionc2()
         a
-        return(a)
+        #print(a)
+        return(Question.player_match(player_name))
+    def player_match(player_name):
+        global b
+        b=a['Player'].unique()
+        result = np.any(b == player_name)
+        return(result)
+
+Question.q1("Evan Mobley")
