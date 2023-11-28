@@ -1,57 +1,380 @@
+import pandas as pd # for storing data in pandas dataframe
+import sqlite3 # for accessing SQL database
 import numpy as np
-class Game:
-    def default():
-        points=0
-        assists = 0
-        blocks = 0
-        steals = 0
-        rebounds = 0
-        points_ = 100 
-        assists_ = 100
-        blocks_ = 100 
-        steals_ = 100 
-        rebounds_ = 100 
-        thr_pt = 0
-        thr_pt_pct = 0 
-        ft_pct = 0 
-        team = None
-        pos = None
-        mvp = False
-        globals().update(locals())
-        #return (points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
-    def questionr1():
-        team="CLE"
-        globals().update(locals())
-    def questionc1():
-        points=10
-        globals().update(locals())
-    def questionr2():
-        pos="PG"
-        globals().update(locals())
-    def questionc2():
-        assists=5
-        globals().update(locals()) 
-    global a
-    a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team, pos, mvp)
-class Question:    
-    def q1(player_name):
-        Game.default()
-        Game.questionr1()
-        Game.questionc1()
-        a
-        #print(a)
-        return(Question.player_match(player_name))
-    def q2(player_name):
-        Game.default()
-        Game.questionr2()
-        Game.questionc2()
-        a
-        #print(a)
-        return(Question.player_match(player_name))
-    def player_match(player_name):
-        global b
-        b=a['Player'].unique()
-        result = np.any(b == player_name)
-        return(result)
+import random
+from random import randint
 
-Question.q1("Evan Mobley")
+data = sqlite3.connect("data.db") # create/access database
+
+# clean
+url = "NBA_Player_Stats_2.csv"
+stats = pd.read_csv(url)
+
+stats = stats.drop({"PF", "Age", "FGA", "GS", "G", "DRB", "3PA", "2P", "2PA", "2P%", "eFG%", "FTA", "ORB", "DRB"}, axis = 1)
+
+stats["Tm"] = stats["Tm"].replace({"VAN": "MEM", "SEA" : "OKC", "NJN" : "BRK", "CHO" : "CHH", "NOK" : "NOP", "NOH" : "NOP"})
+
+stats = stats.rename(columns = {"FT%":"FT_P", "3P%":"THRP_P","3P":"THRP", "FG%":"FG_P"})
+
+stats = stats[stats['Tm'] != "TOT"]
+
+stats.head()
+
+
+stats.to_sql("stats", data, if_exists = "replace", index = False)
+
+cursor = data.cursor()
+cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+print(cursor.fetchall())
+
+
+cursor.execute("SELECT sql FROM sqlite_master WHERE type='table';")
+
+
+def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1,team2, pos, mvp):
+    '''
+    SQL query function pulling stats.
+    
+    parameters: 
+   
+    outputs:
+    table (pandas dataframe): dataframe with queried data
+    '''
+    
+    cmd = \
+    f"""SELECT S.PLAYER, S.POS, S.TM, S.FG, S.FG_P, S.THRP, S.THRP_P, S.FT, S.FT_P, S.PTS, S.AST, S.BLK, S.STL, S.TRB, S.TOV, S.SEASON, S.MVP
+    FROM stats S 
+    WHERE S.PTS >= {points} AND S.AST >= {assists} AND S.BLK >= {blocks} AND S.STL >= {steals} AND S.TRB >= {rebounds} AND 
+          S.PTS <= {points_} AND S.AST <= {assists_} AND S.BLK <= {blocks_} AND S.STL <= {steals_} AND S.TRB <= {rebounds_} AND
+          S.THRP >= {thr_pt} AND S.THRP_P >= {thr_pt_pct} AND S.FT_P >= {ft_pct}  AND S.MVP == {mvp}
+    """
+    
+    data = sqlite3.connect("data.db")
+    table = pd.read_sql_query(cmd, data)
+    
+    if team1 and team2 != None:
+        table1 = table[table['Tm']==f"{team1}"]
+        table2 = table[table['Tm']==f"{team2}"]
+        frames = [table1,table2]
+        table = pd.merge(table1,table2,how="inner",on="Player")
+        table=table.drop_duplicates()
+    elif team1 != None:
+        table= table[table['Tm']==f"{team1}"]
+    elif team2 != None:
+        table= table[table['Tm']==f"{team2}"]
+    if pos != None:
+        table= table[table['Pos']==f"{pos}"]
+    data.close()
+    
+    return table # return pandas dataframe
+
+# defaults
+points = 0
+assists = 0
+blocks = 0
+steals = 0
+rebounds = 0
+points_ = 100 
+assists_ = 100
+blocks_ = 100 
+steals_ = 100 
+rebounds_ = 100 
+thr_pt = 0
+thr_pt_pct = 0 
+ft_pct = 0 
+team1 = None
+team2 = None
+pos = None
+mvp = False
+
+base = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1,team2, pos, mvp)
+
+
+def random_var():
+    """
+    Chosses random numbers and choices of over or under for the question
+    """
+    points_rand = randint(7,15)
+    assists_rand = randint(1,5)
+    blocks_rand = round(random.uniform(0.1,1), 1)
+    steals_rand = round(random.uniform(0.1,1.5), 1)
+    rebounds_rand = round(random.uniform(0.1,6), 1)
+    thr_pt_rand = randint(1,5)
+    thr_pt_pct_rand = round(random.uniform(0.2,0.5), 3)
+    ft_pct_rand = round(random.uniform(0.4,0.9), 3)
+    hol_points = random.choice([True, False])
+    hol_assists = random.choice([True, False])
+    hol_blocks = random.choice([True, False])
+    hol_steals = random.choice([True, False])
+    hol_rebounds = random.choice([True, False])
+    globals().update(locals())
+    
+    
+class all_question:
+    """
+    Class that lists all possible questions
+    Generates random numbers for those questions
+    Then returns it in question form
+    """
+    
+    def points():
+        if hol_points == True:
+            global points
+            points = points_rand
+            question = f"Averaged more than {points} points in a season"
+        else:
+            global points_
+            points_ = points_rand
+            question = f"Averaged less than {points_} points in a season" 
+        return question
+    def assists():
+        if hol_assists == True:
+            global assists
+            assists = assists_rand
+            question = f"Averaged more than {assists} assists in a season"
+        else:
+            global assists_
+            assists_ = assists_rand
+            question = f"Averaged less than {assists_} assists in a season" 
+        return question
+    def blocks():
+        if hol_blocks == True:
+            global blocks
+            blocks = blocks_rand
+            question = f"Averaged more than {blocks} blocks in a season"
+        else:
+            global blocks_
+            blocks_ = blocks_rand
+            question = f"Averaged less than {blocks_} blocks in a season"
+        return question
+    def steals():
+        if hol_steals == True:            
+            global steals
+            steals = steals_rand
+            question = f"Averaged more than {steals} steals in a season"
+        else:
+            global steals_
+            steals_ = steals_rand
+            question = f"Averaged less than {steals_} steals in a season"
+    def rebounds():
+        if hol_rebounds == True:
+            global rebounds
+            rebounds = rebounds_rand
+            question = f"Averaged more than {rebounds} rebounds in a season"
+        else:
+            global rebounds_
+            rebounds_ = rebounds_rand
+            question = f"Averaged less than {rebounds_} rebounds in a season"
+        return question
+    def three_point():
+        global thr_pt
+        thr_pt = thr_pt_rand
+        question = f"Averaged more than {thr_pt} three pointers in a season"
+        return question
+    def three_point_perc():
+        global thr_pt_pct
+        thr_pt_pct = thr_pt_pct_rand
+        question = f"Averaged {thr_pt_pct} three point percentage in a season"
+        return question
+    def free_throw_perc():
+        global ft_pct
+        ft_pct = ft_pct_rand
+        question = f"Averaged {ft_pct} free throw percentage in a season"
+        return question
+    def mvp():
+        global mvp
+        mvp = random.choice([True, False])
+        if mvp == True:
+            question = "Was an MVP"
+        else:
+            question = "Was never an MVP"
+        return question
+        
+        
+def rand_question():
+    """
+    Randomly chooses which questions to ask
+    Questions like team and position are hard coded to be asked every time
+    """
+    team_choice=list(base["Tm"].unique())
+    #makes a list of all teams
+    team_q1 = random.sample(team_choice,2)
+    #randomly chooses two different teams from list
+    team1_q = f"Played for {team_q1[0]}"
+    team2_q = f"Played for {team_q1[1]}"
+    pos_choice=list(base["Pos"].unique())
+    #makes a list of positions
+    pos1 = random.choice(pos_choice)
+    #randomly chooses a position from the list
+    pos_q = f"Played {pos1}"
+    random_var()
+    list_of_question=[all_question.points,all_question.assists,all_question.three_point,all_question.three_point_perc,
+              all_question.steals,all_question.blocks,all_question.rebounds,all_question.free_throw_perc]#,all_question.mvp]   
+    #list of all possible questions
+    loq = random.sample(list_of_question,k=4)
+    #randomly chooses three different questions to ask
+    qr1=loq[0]
+    #runs the first question
+    qr2=loq[1]
+    #runs the second question
+    qr3=loq[2]
+    #runs the third question
+    qr4=loq[3]
+    globals().update(locals())
+
+def default():
+    """
+    Resets to default so all players are included
+    """
+    points=0
+    assists = 0
+    blocks = 0
+    steals = 0
+    rebounds = 0
+    points_ = 100 
+    assists_ = 100
+    blocks_ = 100 
+    steals_ = 100 
+    rebounds_ = 100 
+    thr_pt = 0
+    thr_pt_pct = 0 
+    ft_pct = 0 
+    team1 = None
+    team2 = None
+    pos = None
+    mvp = False
+    globals().update(locals())        
+    
+
+class Game:
+    """
+    Matches the question to each square
+    Makes a list of all possible answers
+    """
+    def r1c1():
+        global b1
+        team1=team_q1[0]
+        team2=team_q1[1]
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b1=a['Player'].unique()
+        default()
+        return team1_q,team2_q
+    def r1c2():
+        global b2
+        team1=team_q1[0]
+        q3=qr3()
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b2=a['Player'].unique()
+        default()
+        return team1_q,q3
+    def r1c3():
+        global b3
+        team1=team_q1[0]
+        q4=qr4()
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b3=a['Player'].unique()
+        default()
+        return team1_q,q4
+    def r2c1():
+        global b4
+        q1=qr1()
+        team2=team_q1[1]
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b4=a['Player'].unique()
+        default()
+        return q1,team2_q
+    def r2c2():
+        global b5
+        q1=qr1()
+        q2=qr3()
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b5=a['Player'].unique()
+        default()
+        return q1,q2
+    def r2c3():
+        global b6
+        q1=qr1()
+        q4=qr4()
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b6=a['Player'].unique()
+        default()
+        return q1,q4
+    def r3c1():
+        global b7
+        q2=qr2()
+        team2=team_q1[1]
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b7=a['Player'].unique()
+        default()
+        return q2,team2_q
+    def r3c2():
+        global b8
+        q2=qr2()
+        q3=qr3()
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b8=a['Player'].unique()
+        default()
+        return q2,q3
+    def r3c3():
+        global b9
+        q2=qr2()
+        q4=qr4()
+        a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
+        b9=a['Player'].unique()
+        default()
+        return q2,q4
+    
+    
+def create_game():
+    default()
+    rand_question()
+    a=Game.r1c1(),Game.r1c2(),Game.r1c3(),Game.r2c1(),Game.r2c2(),Game.r2c3(),Game.r3c1(),Game.r3c2(),Game.r3c3()
+    min_ans = 5
+    max_ans = 800
+    ans_len = (min_ans < len(list(b1)) < max_ans and min_ans < len(list(b2)) < max_ans and min_ans < len(list(b3)) < max_ans
+               and min_ans < len(list(b4)) < max_ans and min_ans < len(list(b5)) < max_ans and min_ans < len(list(b6)) < max_ans 
+               and min_ans < len(list(b7)) < max_ans and min_ans < len(list(b8)) < max_ans and min_ans < len(list(b9)) < max_ans)
+    if None in (qr1(),qr2(),qr3(),qr4()):
+        print ("None")
+        return create_game()
+    if  ans_len == True:
+        print("valid game")
+        return a
+    else:
+        print("invalid and retried")
+        random_var()
+        return create_game()
+
+    
+
+class Answer:
+    """
+    Checks user input
+    """
+    def r1c1(player_name):
+        result = np.any(b1 == player_name)
+        return(result)
+    def r1c2(player_name):
+        result = np.any(b2 == player_name)
+        return(result)
+    def r1c3(player_name):
+        result = np.any(b3 == player_name)
+        return(result)
+    def r2c1(player_name):
+        result = np.any(b4 == player_name)
+        return(result)
+    def r2c2(player_name):
+        result = np.any(b5 == player_name)
+        return(result)
+    def r2c3(player_name):
+        result = np.any(b6 == player_name)
+        return(result)
+    def r3c1(player_name):
+        result = np.any(b7 == player_name)
+        return(result)
+    def r3c2(player_name):
+        result = np.any(b8 == player_name)
+        return(result)
+    def r3c3(player_name):
+        result = np.any(b9 == player_name)
+        return(result)
