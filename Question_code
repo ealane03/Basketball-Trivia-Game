@@ -200,6 +200,7 @@ def rand_question():
     #makes a list of all teams
     team_q1 = random.sample(team_choice,2)
     #randomly chooses two different teams from list
+    global team1_q, team2_q
     team1_q = f"Played for {team_q1[0]}"
     team2_q = f"Played for {team_q1[1]}"
     pos_choice=list(base["Pos"].unique())
@@ -244,6 +245,28 @@ def default():
     pos = None
     mvp = False
     globals().update(locals())        
+def default():
+    """
+    Resets to default so all players are included
+    """
+    points=0
+    assists = 0
+    blocks = 0
+    steals = 0
+    rebounds = 0
+    points_ = 100 
+    assists_ = 100
+    blocks_ = 100 
+    steals_ = 100 
+    rebounds_ = 100 
+    thr_pt = 0
+    thr_pt_pct = 0 
+    ft_pct = 0 
+    team1 = None
+    team2 = None
+    pos = None
+    mvp = False
+    globals().update(locals())        
     
 
 class Game:
@@ -260,7 +283,7 @@ class Game:
         default()
         return team1_q,team2_q
     def r1c2():
-        global b2
+        global b2,q3
         team1=team_q1[0]
         q3=qr3()
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
@@ -268,7 +291,7 @@ class Game:
         default()
         return team1_q,q3
     def r1c3():
-        global b3
+        global b3,q4
         team1=team_q1[0]
         q4=qr4()
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
@@ -276,7 +299,7 @@ class Game:
         default()
         return team1_q,q4
     def r2c1():
-        global b4
+        global b4,q1
         q1=qr1()
         team2=team_q1[1]
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
@@ -284,15 +307,15 @@ class Game:
         default()
         return q1,team2_q
     def r2c2():
-        global b5
+        global b5,q1,q3
         q1=qr1()
-        q2=qr3()
+        q3=qr3()
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
         b5=a['Player'].unique()
         default()
-        return q1,q2
+        return q1,q3
     def r2c3():
-        global b6
+        global b6,q1,q4
         q1=qr1()
         q4=qr4()
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
@@ -300,7 +323,7 @@ class Game:
         default()
         return q1,q4
     def r3c1():
-        global b7
+        global b7,q2
         q2=qr2()
         team2=team_q1[1]
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
@@ -308,7 +331,7 @@ class Game:
         default()
         return q2,team2_q
     def r3c2():
-        global b8
+        global b8,q2,q3
         q2=qr2()
         q3=qr3()
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
@@ -316,7 +339,7 @@ class Game:
         default()
         return q2,q3
     def r3c3():
-        global b9
+        global b9,q2,q4
         q2=qr2()
         q4=qr4()
         a = query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1, team2, pos, mvp)
