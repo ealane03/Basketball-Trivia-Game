@@ -121,65 +121,65 @@ class all_question:
         if hol_points == True:
             global points
             points = points_rand
-            question = f"Averaged more than {points} points in a season"
+            question = f"> {points} points in a season"
         else:
             global points_
             points_ = points_rand
-            question = f"Averaged less than {points_} points in a season" 
+            question = f"< {points_} points in a season" 
         return question
     def assists():
         if hol_assists == True:
             global assists
             assists = assists_rand
-            question = f"Averaged more than {assists} assists in a season"
+            question = f"> {assists} assists in a season"
         else:
             global assists_
             assists_ = assists_rand
-            question = f"Averaged less than {assists_} assists in a season" 
+            question = f"< {assists_} assists in a season" 
         return question
     def blocks():
         if hol_blocks == True:
             global blocks
             blocks = blocks_rand
-            question = f"Averaged more than {blocks} blocks in a season"
+            question = f"> {blocks} blocks in a season"
         else:
             global blocks_
             blocks_ = blocks_rand
-            question = f"Averaged less than {blocks_} blocks in a season"
+            question = f"< {blocks_} blocks in a season"
         return question
     def steals():
         if hol_steals == True:            
             global steals
             steals = steals_rand
-            question = f"Averaged more than {steals} steals in a season"
+            question = f"> {steals} steals in a season"
         else:
             global steals_
             steals_ = steals_rand
-            question = f"Averaged less than {steals_} steals in a season"
+            question = f"< {steals_} steals in a season"
     def rebounds():
         if hol_rebounds == True:
             global rebounds
             rebounds = rebounds_rand
-            question = f"Averaged more than {rebounds} rebounds in a season"
+            question = f"> {rebounds} rebounds in a season"
         else:
             global rebounds_
             rebounds_ = rebounds_rand
-            question = f"Averaged less than {rebounds_} rebounds in a season"
+            question = f"< {rebounds_} rebounds in a season"
         return question
     def three_point():
         global thr_pt
         thr_pt = thr_pt_rand
-        question = f"Averaged more than {thr_pt} three pointers in a season"
+        question = f"> {thr_pt} three pointers in a season"
         return question
     def three_point_perc():
         global thr_pt_pct
         thr_pt_pct = thr_pt_pct_rand
-        question = f"Averaged {thr_pt_pct} three point percentage in a season"
+        question = f"> {thr_pt_pct} three point percentage in a season"
         return question
     def free_throw_perc():
         global ft_pct
         ft_pct = ft_pct_rand
-        question = f"Averaged {ft_pct} free throw percentage in a season"
+        question = f"> {ft_pct} free throw percentage in a season"
         return question
     def mvp():
         global mvp
@@ -367,37 +367,3 @@ def create_game():
         print("invalid and retried")
         random_var()
         return create_game()
-
-    
-
-class Answer:
-    """
-    Checks user input
-    """
-    def r1c1(player_name):
-        result = np.any(b1 == player_name)
-        return(result)
-    def r1c2(player_name):
-        result = np.any(b2 == player_name)
-        return(result)
-    def r1c3(player_name):
-        result = np.any(b3 == player_name)
-        return(result)
-    def r2c1(player_name):
-        result = np.any(b4 == player_name)
-        return(result)
-    def r2c2(player_name):
-        result = np.any(b5 == player_name)
-        return(result)
-    def r2c3(player_name):
-        result = np.any(b6 == player_name)
-        return(result)
-    def r3c1(player_name):
-        result = np.any(b7 == player_name)
-        return(result)
-    def r3c2(player_name):
-        result = np.any(b8 == player_name)
-        return(result)
-    def r3c3(player_name):
-        result = np.any(b9 == player_name)
-        return(result)
