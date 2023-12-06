@@ -151,55 +151,80 @@ class all_question:
             # if it is chosen as more than
             global points
             points = points_rand
-            # takes the randomized points and will apply it into the query 
+            # takes the randomized points number and will apply it into the query 
             question = f"> {points} points in a season"
             # asks the question
         else:
             # if it is chosen as less than
             global points_
             points_ = points_rand
-            # takes the randomized points and will apply it into the query
+            # takes the randomized points number and will apply it into the query
             question = f"< {points_} points in a season"
             # asks the question
         return question
     def assists():
         if hol_assists == True:
+            # if it is chosen as more than
             global assists
             assists = assists_rand
+            # takes the randomized assists number and will apply it into the query 
             question = f"> {assists} assists in a season"
+            # asks the question
         else:
+            # if it is chosen as less than
             global assists_
             assists_ = assists_rand
+            # takes the randomized assists number and will apply it into the query
             question = f"< {assists_} assists in a season" 
+            # asks the question
         return question
     def blocks():
         if hol_blocks == True:
+            # if it is chosen as more than
             global blocks
             blocks = blocks_rand
+            # takes the randomized blocks number and will apply it into the query
             question = f"> {blocks} blocks in a season"
+            # asks the question
         else:
+            # if it is chosen as less than
             global blocks_
             blocks_ = blocks_rand
+            # takes the randomized blocks number and will apply it into the query
             question = f"< {blocks_} blocks in a season"
+            # asks the question
         return question
     def steals():
-        if hol_steals == True:            
+        if hol_steals == True:
+            # if it is chosen as more than
             global steals
             steals = steals_rand
+            # takes the randomized steals number and will apply it into the query
             question = f"> {steals} steals in a season"
+            # asks the question
         else:
+            # if it is chosen as less than
             global steals_
             steals_ = steals_rand
+            # takes the randomized steals number and will apply it into the query
             question = f"< {steals_} steals in a season"
+            # asks the question
+        return question
     def rebounds():
         if hol_rebounds == True:
+            # if it is chosen as more than
             global rebounds
             rebounds = rebounds_rand
+            # takes the randomized rebounds number and will apply it into the query
             question = f"> {rebounds} rebounds in a season"
+            # asks the question
         else:
+            # if it is chosen as less than
             global rebounds_
             rebounds_ = rebounds_rand
+            # takes the randomized rebounds number and will apply it into the query
             question = f"< {rebounds_} rebounds in a season"
+            # asks the question
         return question
     def three_point():
         global thr_pt
