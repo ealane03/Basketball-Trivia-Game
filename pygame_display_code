@@ -6,7 +6,8 @@ pg.init() # initialize game
 screen = pg.display.set_mode((1400, 800)) # render screen
 COLOR_INACTIVE = pg.Color('lightskyblue3') # set color for inactive status
 COLOR_ACTIVE = pg.Color('dodgerblue2') # set color for active status
-FONT = pg.font.Font(None, 20) # question font size
+COLOR_BLACK = pg.Color('black') # set black color
+FONT = pg.font.Font(None, 35) # question font size
 FONT_SMALL = pg.font.Font(None, 28) # small font size
 FONT_LARGE = pg.font.Font(None, 50) # large font size
 
@@ -24,6 +25,8 @@ class InputBox:
         self.txt_surface = FONT_SMALL.render(text, True, self.color) # set text surface
         self.active = False # default status is not active
         self.correct = correct # set correct flag
+        self.x = x
+        self.y = y
 
     def handle_event(self, event):
         '''
@@ -49,11 +52,11 @@ class InputBox:
                 if event.key == pg.K_RETURN: # user presses enter
                     if self.rect == pg.Rect(350, 150, 200, 185): # updates specific box
                         if np.any(b1 == self.text): # checks user's answer against list of query's correct answers
-                            self.text = self.text + " is correct!" 
+                            self.text = self.text + " is correct!" # output if user's answer matches any name in the list
                             self.correct = True
                             self.active = False
                         else:
-                            self.text = "Incorrect"
+                            self.text = self.text + " is incorrect." # output if user's answer does not match any name in the list
                             self.active = False
                             self.correct = True
                     if self.rect == pg.Rect(350, 350, 200, 185):
@@ -62,7 +65,7 @@ class InputBox:
                             self.correct = True    
                             self.active = False                            
                         else:
-                            self.text = "Incorrect"
+                            self.text = self.text + " is incorrect."
                             self.active = False
                             self.correct = True
                     if self.rect == pg.Rect(350, 550, 200, 185):
@@ -71,7 +74,7 @@ class InputBox:
                             self.correct = True     
                             self.active = False                            
                         else:
-                            self.text = "Incorrect"    
+                            self.text = self.text + " is incorrect."    
                             self.active = False                                         
                             self.correct = True
 
@@ -81,7 +84,7 @@ class InputBox:
                             self.correct = True   
                             self.active = False                            
                         else:
-                            self.text = "Incorrect"
+                            self.text = self.text + " is incorrect."
                             self.active = False
                             self.correct = True                            
                     if self.rect == pg.Rect(600, 350, 200, 185):
@@ -90,7 +93,7 @@ class InputBox:
                             self.correct = True
                             self.active = False                
                         else:
-                            self.text = "Incorrect"
+                            self.text = self.text + " is incorrect."
                             self.active = False 
                             self.correct = True                            
                     if self.rect == pg.Rect(600, 550, 200, 185):
@@ -99,7 +102,7 @@ class InputBox:
                             self.correct = True                            
                             self.active = False                            
                         else:
-                            self.text = "Incorrect"    
+                            self.text = self.text + " is incorrect."    
                             self.active = False                         
                             self.correct = True                            
                     if self.rect == pg.Rect(850, 150, 200, 185):
@@ -108,7 +111,7 @@ class InputBox:
                             self.correct = True                   
                             self.active = False                        
                         else:
-                            self.text = "Incorrect"                   
+                            self.text = self.text + " is incorrect."                   
                             self.active = False                                                     
                             self.correct = True                            
                     if self.rect == pg.Rect(850, 350, 200, 185):
@@ -117,7 +120,7 @@ class InputBox:
                             self.correct = True                            
                             self.active = False                                                    
                         else:
-                            self.text = "Incorrect"
+                            self.text = self.text + " is incorrect."
                             self.active = False
                             self.correct = True                            
                     if self.rect == pg.Rect(850, 550, 200, 185):
@@ -126,7 +129,7 @@ class InputBox:
                             self.correct = True                            
                             self.active = False                            
                         else:
-                            self.text = "Incorrect"
+                            self.text = self.text + " is incorrect."
                             self.active = False   
                             self.correct = True                        
                                         
@@ -135,20 +138,38 @@ class InputBox:
                 else:
                     self.text += event.unicode # user presses text keys
                     
-                # Re-render the text.
+                # re-render the text
                 self.txt_surface = FONT_SMALL.render(self.text, True, self.color)
                 
     def update(self):
-        # resize box if the text is too long
-        width = max(200, self.txt_surface.get_width()+10)
+        # update rect
+        width = 200
         self.rect.w = width
 
     def draw(self, screen):
         # blit the text
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        words = [word.split(' ') for word in self.text.splitlines()]  # 2D array where each row is a list of words
+        space = FONT.size(' ')[0]  # The width of a space
+        
+        x = self.x
+        y = self.y
+        pos = (x,y)
+        
+        max_width = x + 185
+        
+        for line in words:
+            for word in line:
+                word_surface = FONT.render(word, 0, COLOR_BLACK)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width >= max_width:
+                    x = pos[0]  # Reset the x
+                    y += word_height  # Start on new row
+                screen.blit(word_surface, (x + 5, y + 5))
+                x += word_width + space
+            x = pos[0]  # Reset the x
+            y += word_height  # Start on new row         
         # blit the rect
-        pg.draw.rect(screen, self.color, self.rect, 2)
-
+        pg.draw.rect(screen, self.color, self.rect, 2)                   
 
 class question:
     '''
@@ -159,12 +180,29 @@ class question:
         self.text = text
         self.x = x
         self.y = y
-        
-    def label(self, screen):
-        # render text
-        q = FONT.render(self.text, False, (255,255,255))
-        screen.blit(q, (self.x, self.y))
 
+    def blit_text(self, screen):
+        words = [word.split(' ') for word in self.text.splitlines()]  # 2D array where each row is a list of words
+        space = FONT.size(' ')[0]  # The width of a space
+        
+        x = self.x
+        y = self.y
+        pos = (x,y)
+        
+        max_width = x + 200
+        
+        for line in words:
+            for word in line:
+                word_surface = FONT.render(word, 0, COLOR_BLACK)
+                word_width, word_height = word_surface.get_size()
+                if x + word_width >= max_width:
+                    x = pos[0]  # Reset the x
+                    y += word_height  # Start on new row
+                screen.blit(word_surface, (x, y))
+                x += word_width + space
+            x = pos[0]  # Reset the x
+            y += word_height  # Start on new row                
+        
 class title:   
     '''
     Class for title with text and coordinates
@@ -182,7 +220,7 @@ class title:
         
 def main():
     '''
-    Runs game
+    Runs game query, creates 9 input boxes, 6 questions, and reruns code if gameover.
     '''
     clock = pg.time.Clock()
     
@@ -207,15 +245,16 @@ def main():
     create_game()
     
     # create 6 questions
-    Q1 = question(350, 100, team2_q)
-    Q2 = question(600, 100, q3)
-    Q3 = question(850, 100, q4)
-    Q4 = question(150, 150, team1_q)
-    Q5 = question(150, 350, q1)
-    Q6 = question(150, 550, q2)
+    Q1 = question(600, 100, q3)
+    Q2 = question(850, 100, q4)
+    Q3 = question(150, 350, q1)
+    Q4 = question(150, 550, q2)
     
-    questions = [Q1, Q2, Q3, Q4, Q5, Q6]
+    questions = [Q1, Q2, Q3, Q4]
     
+    team1 = pg.image.load(team1_q)
+    team2 = pg.image.load(team2_q)
+
     done = False
     finished = False    
     
@@ -233,17 +272,19 @@ def main():
             for box in input_boxes:
                 box.handle_event(event)
 
-            for box in input_boxes:
-                box.update()
-
             screen.fill((30, 30, 30))
             screen.blit(bg, (0, 0))
+            screen.blit(team1, (375, 40))
+            screen.blit(team2, (155, 180))
 
             for box in input_boxes:
                 box.draw(screen)
             
+            for box in input_boxes:
+                box.update()
+            
             for q in questions:
-                q.label(screen)
+                q.blit_text(screen)                      
             
             t = title(595, 40, "Hoops Trivia")
             t.label(screen)
@@ -261,6 +302,6 @@ def main():
             pg.display.flip()
             clock.tick(30)
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     main()
     pg.quit()
