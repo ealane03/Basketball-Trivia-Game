@@ -123,14 +123,14 @@ def random_var():
     """
     
     # the following uses random package to randomly generate numbers and choices
-    points_rand = randint(7,15)
+    points_rand = randint(6,13)
     assists_rand = randint(1,5)
-    blocks_rand = round(random.uniform(0.1,1), 1)
-    steals_rand = round(random.uniform(0.1,1.5), 1)
-    rebounds_rand = round(random.uniform(0.1,6), 1)
-    thr_pt_rand = randint(1,5)
-    thr_pt_pct_rand = round(random.uniform(0.2,0.5), 3)
-    ft_pct_rand = round(random.uniform(0.4,0.9), 3)
+    blocks_rand = round(random.uniform(0.1,0.6), 1)
+    steals_rand = round(random.uniform(0.1,0.8), 1)
+    rebounds_rand = round(random.uniform(0.1,4), 1)
+    thr_pt_rand = randint(1,3)
+    thr_pt_pct_rand = round(random.uniform(0.1,0.4), 3)
+    ft_pct_rand = round(random.uniform(0.2,0.8), 3)
     hol_points = random.choice([True, False])
     hol_assists = random.choice([True, False])
     hol_blocks = random.choice([True, False])
