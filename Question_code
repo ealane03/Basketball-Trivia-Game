@@ -16,7 +16,7 @@ stats = stats.drop({"PF", "Age", "FGA", "GS", "G", "DRB", "3PA", "2P", "2PA", "2
 # Drops all data that won't be used for the game
 # Can always remove to add more questions and challenge to the game
 
-stats["Tm"] = stats["Tm"].replace({"VAN": "MEM", "SEA" : "OKC", "NJN" : "BRK", "CHO" : "CHH", "NOK" : "NOP", "NOH" : "NOP"})
+stats["Tm"] = stats["Tm"].replace({"VAN": "MEM", "SEA" : "OKC", "NJN" : "BRK", "CHO" : "CHH", "NOK" : "NOP", "NOH" : "NOP", "CHA" : "CHH"})
 # renamed the teams to their current team name 
 # this was due to teams changing locations or names
 
@@ -34,6 +34,7 @@ cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
 
 
 cursor.execute("SELECT sql FROM sqlite_master WHERE type='table';")
+data.close()
 
 
 def query_stats(points, assists, blocks, steals, rebounds, points_, assists_, blocks_, steals_, rebounds_, thr_pt_pct, thr_pt, ft_pct, team1,team2, pos, mvp):
@@ -123,14 +124,14 @@ def random_var():
     """
     
     # the following uses random package to randomly generate numbers and choices
-    points_rand = randint(6,13)
+    points_rand = randint(7,15)
     assists_rand = randint(1,5)
-    blocks_rand = round(random.uniform(0.1,0.6), 1)
-    steals_rand = round(random.uniform(0.1,0.8), 1)
-    rebounds_rand = round(random.uniform(0.1,4), 1)
-    thr_pt_rand = randint(1,3)
-    thr_pt_pct_rand = round(random.uniform(0.1,0.4), 3)
-    ft_pct_rand = round(random.uniform(0.2,0.8), 3)
+    blocks_rand = round(random.uniform(0.1,1), 1)
+    steals_rand = round(random.uniform(0.1,1.5), 1)
+    rebounds_rand = round(random.uniform(0.1,6), 1)
+    thr_pt_rand = randint(1,5)
+    thr_pt_pct_rand = round(random.uniform(0.2,0.5), 3)
+    ft_pct_rand = round(random.uniform(0.4,0.9), 3)
     hol_points = random.choice([True, False])
     hol_assists = random.choice([True, False])
     hol_blocks = random.choice([True, False])
@@ -141,8 +142,8 @@ def random_var():
     
 class all_question:
     """
-    Class that contains all possible questions
-    Takes the generated random numbers for those questions from the random_var function
+    Class that contains almost all possible questions that will be asked
+    Applies randomly generated numbers from the random_var function into the query
     Returns the question in question form
     """
     
@@ -229,63 +230,77 @@ class all_question:
     def three_point():
         global thr_pt
         thr_pt = thr_pt_rand
+        # takes the randomized three point number and will apply it into the query
         question = f"> {thr_pt} 3-pointers in a season"
+        # asks the question
         return question
     def three_point_perc():
         global thr_pt_pct
         thr_pt_pct = thr_pt_pct_rand
+        # takes the randomized three point percentage and will apply it into the query
         question = f"> {round(thr_pt_pct*100)}% 3-point in a season"
+        # asks the question
         return question
     def free_throw_perc():
         global ft_pct
         ft_pct = ft_pct_rand
+        # takes the randomized free throw percentage and will apply it into the query
         question = f"> {ft_pct} free throw % in a season"
+        # asks the question
         return question
     def mvp():
+        # mvp question is defined but not used for our game to make it more challenging
         global mvp
         mvp = random.choice([True, False])
         if mvp == True:
             question = "Was an MVP"
         else:
             question = "Was never an MVP"
+        # asks the question
         return question
         
         
 def rand_question():
     """
-    Randomly chooses which questions to ask
-    Questions like team and position are hard coded to be asked every time
+    First randomly chooses which teams will be asked
+    Also randomly chooses a position but is not used for our game but can be
+    Then randomly chooses which questions to ask
+    Question asking teams are hard coded to be asked every time to be more challenging
     """
     team_choice=list(base["Tm"].unique())
-    #makes a list of all teams
+    # makes a list of all teams
     team_q1 = random.sample(team_choice,2)
     #randomly chooses two different teams from list
     global team1_q, team2_q
-    team1_q = f"Played for {team_q1[0]}"
-    team2_q = f"Played for {team_q1[1]}"
+    team1_q = f"{team_q1[0]}.png"
+    team2_q = f"{team_q1[1]}.png"
     pos_choice=list(base["Pos"].unique())
-    #makes a list of positions
+    # makes a list of positions
     pos1 = random.choice(pos_choice)
-    #randomly chooses a position from the list
+    # randomly chooses a position from the list
     pos_q = f"Played {pos1}"
+    # returns position in question form
+    
     random_var()
+    # calls the random_var function to generate random numbers for the questions
     list_of_question=[all_question.points,all_question.assists,all_question.three_point,all_question.three_point_perc,
-              all_question.steals,all_question.blocks,all_question.rebounds,all_question.free_throw_perc]#,all_question.mvp]   
-    #list of all possible questions
+              all_question.steals,all_question.blocks,all_question.rebounds,all_question.free_throw_perc]   
+    # list of all possible questions that is used for our game excluding teams and positions
     loq = random.sample(list_of_question,k=4)
-    #randomly chooses three different questions to ask
+    # randomly chooses four different questions to ask
     qr1=loq[0]
-    #runs the first question
+    # runs the first question
     qr2=loq[1]
-    #runs the second question
+    # runs the second question
     qr3=loq[2]
-    #runs the third question
+    # runs the third question
     qr4=loq[3]
+    # runs the fourth question
     globals().update(locals())
 
 def default():
     """
-    Resets to default so all players are included
+    Resets all variables in query to default so all players are included
     """
     points=0
     assists = 0
@@ -304,35 +319,14 @@ def default():
     team2 = None
     pos = None
     mvp = False
-    globals().update(locals())        
-def default():
-    """
-    Resets to default so all players are included
-    """
-    points=0
-    assists = 0
-    blocks = 0
-    steals = 0
-    rebounds = 0
-    points_ = 100 
-    assists_ = 100
-    blocks_ = 100 
-    steals_ = 100 
-    rebounds_ = 100 
-    thr_pt = 0
-    thr_pt_pct = 0 
-    ft_pct = 0 
-    team1 = None
-    team2 = None
-    pos = None
-    mvp = False
-    globals().update(locals())        
+    globals().update(locals()) 
     
 
 class Game:
     """
-    Matches the question to each square
-    Makes a list of all possible answers
+    Matches the question to each square following row and column
+    Runs the question and imports the stats into the query
+    Makes a list of all possible players who fit the requirements
     """
     def r1c1():
         global b1
@@ -409,9 +403,15 @@ class Game:
     
     
 def create_game():
+    """
+    Function that will create a new game when ran
+    Also checks to make sure that each question has answers
+    """
     default()
+    # sets all stats to default
     rand_question()
-    a=Game.r1c1(),Game.r1c2(),Game.r1c3(),Game.r2c1(),Game.r2c2(),Game.r2c3(),Game.r3c1(),Game.r3c2(),Game.r3c3()
+    # runs function to generate the randomized questions
+    f=Game.r1c1(),Game.r1c2(),Game.r1c3(),Game.r2c1(),Game.r2c2(),Game.r2c3(),Game.r3c1(),Game.r3c2(),Game.r3c3()
     min_ans = 5
     max_ans = 800
     ans_len = (min_ans < len(list(b1)) < max_ans and min_ans < len(list(b2)) < max_ans and min_ans < len(list(b3)) < max_ans
@@ -422,7 +422,7 @@ def create_game():
         return create_game()
     if  ans_len == True:
         print("valid game")
-        return a
+        return f
     else:
         print("invalid and retried")
         random_var()
