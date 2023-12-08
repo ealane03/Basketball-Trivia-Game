@@ -1,6 +1,6 @@
 # imports 
-import pygame as pg
-import time
+import pygame as pg # for GUI
+# import time # 
     
 pg.init() # initialize game
 screen = pg.display.set_mode((1400, 800)) # render screen
@@ -24,9 +24,9 @@ class InputBox:
         self.text = text # set text 
         self.txt_surface = FONT_SMALL.render(text, True, self.color) # set text surface
         self.active = False # default status is not active
-        self.correct = correct # set correct flag
-        self.x = x
-        self.y = y
+        self.correct = correct # set correct flag, determines if box has accepted an answer yet
+        self.x = x # x position
+        self.y = y # y position
 
     def handle_event(self, event):
         '''
@@ -37,10 +37,10 @@ class InputBox:
             if self.rect.collidepoint(event.pos):
                 # toggle active variable depending on correct flag
                 if self.correct == False:
-                    self.text = ""
-                    self.active = True
+                    self.text = "" # reset text in box if not correct yet
+                    self.active = True 
                 if self.correct == True:
-                    self.active = False
+                    self.active = False # if answer already correct, clicking box has no effect (not active)
             else:
                 self.active = False
             # change current color of the input box.
@@ -50,11 +50,12 @@ class InputBox:
             # if the user presses a key
             if self.active:
                 if event.key == pg.K_RETURN: # user presses enter
-                    if self.rect == pg.Rect(350, 150, 200, 185): # updates specific box
+                    
+                    if self.rect == pg.Rect(350, 150, 200, 185): # updates specific box based on coordinates
                         if np.any(b1 == self.text): # checks user's answer against list of query's correct answers
                             self.text = self.text + " is correct!" # output if user's answer matches any name in the list
-                            self.correct = True
-                            self.active = False
+                            self.correct = True  
+                            self.active = False 
                         else:
                             self.text = self.text + " is incorrect." # output if user's answer does not match any name in the list
                             self.active = False
@@ -157,6 +158,7 @@ class InputBox:
         
         max_width = x + 185
         
+        # blits text to next line if line exceeds max width
         for line in words:
             for word in line:
                 word_surface = FONT.render(word, 0, COLOR_BLACK)
@@ -190,7 +192,8 @@ class question:
         pos = (x,y)
         
         max_width = x + 200
-        
+                
+        # blits text to next line if line exceeds max width
         for line in words:
             for word in line:
                 word_surface = FONT.render(word, 0, COLOR_BLACK)
@@ -241,10 +244,10 @@ def main():
                    input_box4, input_box5, input_box6,
                    input_box7, input_box8, input_box9]
     
-    # run query
+    # run query to create game
     create_game()
     
-    # create 6 questions
+    # create 4 questions
     Q1 = question(600, 100, q3)
     Q2 = question(850, 100, q4)
     Q3 = question(150, 350, q1)
@@ -252,6 +255,7 @@ def main():
     
     questions = [Q1, Q2, Q3, Q4]
     
+    # create 2 team questions
     team1 = pg.image.load(team1_q)
     team2 = pg.image.load(team2_q)
 
@@ -262,46 +266,58 @@ def main():
     while not done:
         for event in pg.event.get():
                         
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT: # exit game
                 done = True
                 
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_r and finished:
+                if event.key == pg.K_r and finished: # restart game
                     main()
-                
+                if event.key == pg.K_x and finished: # exit game
+                    done = True
+            
+            # handle user input in box   
             for box in input_boxes:
-                box.handle_event(event)
-
+                box.handle_event(event) 
+            
+            # fill background
             screen.fill((30, 30, 30))
+            
+            # blit backgound image
             screen.blit(bg, (0, 0))
+            
+            # blit team questions
             screen.blit(team1, (375, 40))
             screen.blit(team2, (155, 180))
-
+            
+            # output text for each box
             for box in input_boxes:
                 box.draw(screen)
             
+            # update each box
             for box in input_boxes:
                 box.update()
             
+            # blit questions
             for q in questions:
                 q.blit_text(screen)                      
             
+            # display title
             t = title(595, 40, "Hoops Trivia")
             t.label(screen)
-                                
+            
+            # game finished when all boxes have accepted answer, present option to restart game
             if input_box1.correct & input_box2.correct & input_box3.correct & input_box4.correct & input_box5.correct & input_box6.correct & input_box7.correct & input_box8.correct & input_box9.correct:
                 finished = True
-        
             if finished:  
                 # restart option
-                gameover = FONT.render("Press R to Restart", False, (255, 255, 255))
+                gameover = FONT.render("Press R to Restart or X to Exit", False, (255, 255, 255))
                 rect = gameover.get_rect()
                 rect.center = screen.get_rect().center
                 screen.blit(gameover, rect)
 
-            pg.display.flip()
-            clock.tick(30)
+            pg.display.flip() # updates screen
+            clock.tick(30) # at most 30 FPS
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     main()
     pg.quit()
