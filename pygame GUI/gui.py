@@ -1,3 +1,6 @@
+from component import InputBox, question, title
+import pygame as pg
+
 class run_main:
     '''
     Runs game with main function.
