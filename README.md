@@ -10,6 +10,8 @@ The goal of the game is to fill out all 9 squares with names of the players whic
 
 ![image](https://github.com/ealane03/Basketball-Trivia-Game/assets/146393991/f0735f5d-9536-402f-90cf-1a81b0f692db)
 
+![image](https://github.com/ealane03/Basketball-Trivia-Game/assets/146393991/5794999c-adc4-4200-94c6-3af7c475a4e0)
+
 REFERENCES AND ACKNOWLEDGEMENTS: 
 Basketball Reference: https://www.basketball-reference.com/
 Immaculate Grid: https://www.immaculategrid.com/basketball/mens
