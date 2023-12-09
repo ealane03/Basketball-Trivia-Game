@@ -1,10 +1,10 @@
 class run_main:
     '''
     Runs game with main function.
-    '''
-    def run():
+    ''' 
+    def variables():
         '''
-        Runs full game.
+        Creates variables.
         '''
         pg.init() # initialize game
         screen = pg.display.set_mode((1400, 800)) # render screen
@@ -15,11 +15,7 @@ class run_main:
         FONT_SMALL = pg.font.Font(None, 28) # small font size
         FONT_LARGE = pg.font.Font(None, 50) # large font size
         globals().update(locals())
-
-        if __name__ == '__main__':
-            main()
-            pg.quit()
-
+    
     def main():
         '''
         Runs game query, creates 9 input boxes, 6 questions, and reruns code if gameover.
@@ -65,29 +61,15 @@ class run_main:
         # loop game until all all questions have been answered 
         while not done:
             for event in pg.event.get():
-
-                if event.type == pg.QUIT: # exit game
-                    done = True
-
-                if event.type == pg.KEYDOWN:
-                    if event.key == pg.K_r and finished: # restart game
-                        main()
-                    if event.key == pg.K_x and finished: # exit game
-                        done = True
-
-                # handle user input in box   
-                for box in input_boxes:
-                    box.handle_event(event) 
-
-                # fill background
-                screen.fill((30, 30, 30))
-
                 # blit backgound image
                 screen.blit(bg, (0, 0))
-
                 # blit team questions
                 screen.blit(team2, (375, 40))
                 screen.blit(team1, (155, 180))
+                
+                # handle user input in box   
+                for box in input_boxes:
+                    box.handle_event(event) 
 
                 # output text for each box
                 for box in input_boxes:
@@ -106,14 +88,25 @@ class run_main:
                 t.label(screen)
 
                 # game finished when all boxes have accepted answer, present option to restart game
-                if input_box1.correct & input_box2.correct & input_box3.correct & input_box4.correct & input_box5.correct & input_box6.correct & input_box7.correct &    input_box8.correct & input_box9.correct:
+                if input_box1.correct & input_box2.correct & input_box3.correct & input_box4.correct & input_box5.correct & input_box6.correct & input_box7.correct & input_box8.correct & input_box9.correct:
                     finished = True
                 if finished:  
                     # restart option
-                    gameover = FONT.render("Press R to Restart or X to Exit", False, (255, 255, 255))
+                    gameover = FONT.render("Press X to Exit", False, (255, 255, 255))
                     rect = gameover.get_rect()
                     rect.center = screen.get_rect().center
                     screen.blit(gameover, rect)
-
+                    
                 pg.display.flip() # updates screen
+
+                if event.type == pg.QUIT: # exit game
+                    done = True
+                
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_x and finished: # exit game
+                        done = True
+                        
                 clock.tick(30) # at most 30 FPS
+                
+        if __name__ == '__main__':
+            pg.quit()
