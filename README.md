@@ -6,10 +6,11 @@ Welcome to our project! Our project is going to be a game called Basketball Triv
 PACKAGE INSTALLATION
 
 INSTRUCTION
-The goal of the game is to fill out all 9 squares with names of the players which entail to the descriptions that the game provides. Once the game has started you are able to click each square and enter the names of the players that you have a knowledge of. Once you are finished typing out the name, be sure to hit the enter key and the game will display a message of whether or not you were able to get the correct answer. Once you have completed answering all 9 squares of the grid, you are going to be prompted with an option to restart the game, by pressing R. 
+The goal of the game is to fill out all 9 squares with names of the players which entail to the descriptions that the game provides. Once the game has started you are able to click each square and enter the names of the players that you have a knowledge of. Once you are finished typing out the name, be sure to hit the enter key and the game will display a message of whether or not you were able to get the correct answer. Once you have completed answering all 9 squares of the grid, you are going to be prompted with an option to exit the game, by pressing X. 
+
+![image](https://github.com/ealane03/Basketball-Trivia-Game/assets/146393991/f0735f5d-9536-402f-90cf-1a81b0f692db)
 
 REFERENCES AND ACKNOWLEDGEMENTS: 
 Basketball Reference: https://www.basketball-reference.com/
 Immaculate Grid: https://www.immaculategrid.com/basketball/mens
 
-![image](https://github.com/ealane03/Basketball-Trivia-Game/assets/146393991/f0735f5d-9536-402f-90cf-1a81b0f692db)
