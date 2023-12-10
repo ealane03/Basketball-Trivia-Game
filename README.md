@@ -4,10 +4,10 @@
 Welcome to our project! Our project is going to be a game called Basketball Trivia! Basketball Trivia is a great game where you can put your knowledge of the National Basketball Association to the test. The way this game works is the player is going to be presented with a 3x3 grid with prompts/descriptions of either teams or statistics displayed on the horizontal and vertical sides of the grid. The goal of the game is to come up with a player name that corresponds to the descriptions on both the horizontal and vertical axes. 
 
 ## INSTRUCTIONS:
-To run the game yourself, first clone this repository on your local computer using the following line:\
+To run the game yourself, first clone this repository on your local computer using the following line:  
 `git clone https://github.com/ealane03/Basketball-Trivia-Game.git && cd Basketball-Trivia-Game`
 
-To install the package requirements on your local computer, use the following line:\
+To install the package requirements on your local computer, use the following line:  
 `conda create --name NEWENV --file requirements.txt`
 
 ## HOW TO PLAY
