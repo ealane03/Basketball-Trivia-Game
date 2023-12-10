@@ -12,7 +12,7 @@ To install the package requirements on your local computer, use the following li
 
 To run the game, download `demo.ipynb` and run all cells.
 
-## PROJECT OVERVIEW
+## PROJECT TECHNICAL OVERVIEW
 
 ### Scraper
 ### Query
