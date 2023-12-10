@@ -1,4 +1,7 @@
+import component
 from component import InputBox, question, title
+import Game
+from Game import all_question, game
 import pygame as pg
 
 class run_main:
@@ -44,7 +47,7 @@ class run_main:
                        input_box7, input_box8, input_box9]
 
         # run query to create game (modify once classes are created)
-        create_game()
+        Game.create_game()
 
         # create 4 questions
         Q1 = question(600, 100, q1)
