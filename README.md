@@ -26,6 +26,6 @@ Our game successfully functions if given a completed dataset. However, we faced 
 A group of people that can potentially benefit from Basketball Trivia is the NBA fanbase. This game is created as something that can be fun and enjoyable with a bit of competition to test your knowledge of the NBA with your friends. A group of people that might be harmed by this product is people that have been affected by these NBA players. Some of the NBA players, in the past or present, have been involved in particular scandals that could be offensive to some people.
 
 ## REFERENCES AND ACKNOWLEDGEMENTS: 
-Basketball Reference: https://www.basketball-reference.com/
+Basketball Reference: https://www.basketball-reference.com/  
 Immaculate Grid: https://www.immaculategrid.com/basketball/mens
 
