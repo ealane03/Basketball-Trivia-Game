@@ -273,7 +273,7 @@ def default():
     
     
 
-class Game:
+class game:
     """
     Matches the question to each square following row and column
     Runs the question and imports the stats into the query
@@ -426,7 +426,7 @@ def create_game():
     # sets all stats to default
     rand_question()
     # runs function to generate the randomized questions
-    f=Game.r1c1(),Game.r1c2(),Game.r1c3(),Game.r2c1(),Game.r2c2(),Game.r2c3(),Game.r3c1(),Game.r3c2(),Game.r3c3()
+    f=game.r1c1(),game.r1c2(),game.r1c3(),game.r2c1(),game.r2c2(),game.r2c3(),game.r3c1(),game.r3c2(),game.r3c3()
     # runs all squares in gmae to compile a list of all players who match criteria
     min_ans = 5
     # the minimum amount of players the twp questions can have
