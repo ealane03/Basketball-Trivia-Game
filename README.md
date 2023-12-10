@@ -1,4 +1,4 @@
-# Basketball-Trivia-Game
+# __Basketball-Trivia-Game__
 
 ## DESCRIPTION
 Welcome to our project! Our project is going to be a game called Basketball Trivia! Basketball Trivia is a great game where you can put your knowledge of the National Basketball Association to the test. The way this game works is the player is going to be presented with a 3x3 grid with prompts/descriptions of either teams or statistics displayed on the horizontal and vertical sides of the grid. The goal of the game is to come up with a player name that corresponds to the descriptions on both the horizontal and vertical axes. 
