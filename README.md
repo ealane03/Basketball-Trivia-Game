@@ -10,6 +10,8 @@ To run the game yourself, first clone this repository on your local computer usi
 To install the package requirements on your local computer, use the following line:  
 `conda create --name NEWENV --file requirements.txt`
 
+To run the game, download `demo.ipynb` and run all cells.
+
 ## PROJECT OVERVIEW
 
 ### Scraper
