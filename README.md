@@ -10,6 +10,12 @@ To run the game yourself, first clone this repository on your local computer usi
 To install the package requirements on your local computer, use the following line:  
 `conda create --name NEWENV --file requirements.txt`
 
+## PROJECT OVERVIEW
+
+### Scraper
+### Query
+### PyGame GUI
+
 ## HOW TO PLAY
 The goal of the game is to fill out all 9 squares with names of the players which entail to the descriptions that the game provides. Once the game has started you are able to click each square and enter the names of the players that you have a knowledge of. Once you are finished typing out the name, be sure to hit the enter key and the game will display a message of whether or not you were able to get the correct answer. Once you have completed answering all 9 squares of the grid, you are going to be prompted with an option to exit the game, by pressing X. 
 
