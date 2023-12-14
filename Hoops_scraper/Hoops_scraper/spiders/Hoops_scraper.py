@@ -30,30 +30,40 @@ class HoopsSpider(scrapy.Spider):
         
         No output.
         '''
-        # create list of players links
-        players_list = ['https://www.basketball-reference.com/' + a.attrib['href'] 
-                      for a in response.css('ul.alphabet a')] 
         prefix = "https://www.basketball-reference.com/players/"
         suffix = list(string.ascii_lowercase) 
+        # used to go through entire alphabet to extract all players
         for a in suffix:
             alph_url = prefix + a + "/"
+            # results in url to basketball reference page that is sorted by alphabet
             yield scrapy.Request(alph_url, callback = self.parse_player_by_alph) # callback next function for each player list    
     def parse_player_by_alph(self,response):
         """
         Begin at player page by alphabet, collects links to players pages
         Will call next function to scrape player page
+        
+        No output
         """
         prefix = "https://www.basketball-reference.com"
         player_suffix = response.css("th.left a::attr(href)").getall()
+        # link to player player info page
         for suffix in player_suffix:
+            # iterates through each player page
             player_url = prefix + suffix
             yield scrapy.Request(player_url, callback = self.parse_player_stats)      
             
     def parse_player_stats(self,response):
+        """
+        Starting at a specific player page, collects all needed data from table
+        Outputs a table that contains all data
+        """
         for i in range(0,22):
+            # iterates through the entire table
             if response.css(f"tr.full_table th.left:nth-of-type({i}) a::text").get() == "":
+                # used if players didn't play for 22 years to prevent blanks when scraping
                 break
             else:
+                # scrapes all data individually
                 yield{
                 "Season":response.css(f"tr.full_table th.left:nth-of-type({i}) a::text").get(), #years
                 "Tms":response.css(f"#per_game tbody tr.full_table:nth-of-type({i}) td.left[data-stat=team_id] a::text").get(), #teams
@@ -91,11 +101,10 @@ class TeamSpider(scrapy.Spider):
     start_urls = ["https://www.sportslogos.net/teams/list_by_league/6/National_Basketball_Association/NBA/logos"]
     def parse(self, response):
         '''
-        Hardcode from initial homepage to players page.
-        Call parse_players function on players page.
-        
-        No output. 
+        Extracts the link to the logo of each image
+        Returns a dictionary containing a list of all teams in alphabetical order
         '''
         team_logo = response.css("div.section[id=team] ul.logoWall img::attr(src)").extract()
+        # extracts the logos link
         for i in range(30):
             yield {"team":team_logo[i]} # callback next function
